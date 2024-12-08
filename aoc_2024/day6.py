@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from loguru import logger
 
 from aoc_2024.utils import get_day_and_input, by_line
@@ -44,10 +46,38 @@ def part_1(data):
             dir *= turn
         else:
             pos = new_pos
-    return len(positions)
+    return positions
 
 
-def part_2(data):
+def get_next_obstacle(pos, dir, new_obstacles_by_real, new_obstacles_by_imag):
+    obs = 9999999 + 999999j
+
+    try:
+        if dir == 1:
+            return complex(
+                min(o.real for o in new_obstacles_by_imag if o.real > pos.real),
+                pos.imag,
+            )
+        elif dir == -1:
+            return complex(
+                max(o.real for o in new_obstacles_by_imag if o.real < pos.real),
+                pos.imag,
+            )
+        elif dir == -1j:
+            return complex(
+                pos.real,
+                max(o.imag for o in new_obstacles_by_real if o.imag < pos.imag),
+            )
+        elif dir == 1j:
+            return complex(
+                pos.real,
+                min(o.imag for o in new_obstacles_by_real if o.imag > pos.imag),
+            )
+    except:
+        return obs
+
+
+def part_2(data, poss):
     obstacles = set()
 
     i = j = 0
@@ -78,24 +108,33 @@ def part_2(data):
     turn = -1j
 
     cycles = 0
-    for r in range(max_i + 1):
-        for s in range(0, min_j - 1, -1):
-            pos = start_pos
-            positions = set()
-            dir = start_dir
-            new_obstacle = complex(r, s)
-            new_obstacles = obstacles | {new_obstacle}
 
-            while max_i >= pos.real >= 0 >= pos.imag >= min_j:
-                if (pos, dir) in positions:
-                    cycles += 1
-                    break
-                positions.add((pos, dir))
-                new_pos = pos + dir
-                if new_pos in new_obstacles:
-                    dir *= turn
-                else:
-                    pos = new_pos
+    obs_by_real = defaultdict(set)
+    obs_by_imag = defaultdict(set)
+    for p in obstacles:
+        obs_by_real[p.real].add(p)
+        obs_by_imag[p.imag].add(p)
+
+    for new_obstacle in poss:
+        pos = start_pos
+        positions = set()
+        dir = start_dir
+        obs_by_imag[new_obstacle.imag].add(new_obstacle)
+        obs_by_real[new_obstacle.real].add(new_obstacle)
+
+        while max_i >= pos.real >= 0 >= pos.imag >= min_j:
+            obs = get_next_obstacle(
+                pos, dir, obs_by_real[pos.real], obs_by_imag[pos.imag]
+            )
+            if (obs, dir) in positions:
+                cycles += 1
+                break
+            positions.add((obs, dir))
+            pos = obs - dir
+            dir *= turn
+
+        obs_by_imag[new_obstacle.imag].remove(new_obstacle)
+        obs_by_real[new_obstacle.real].remove(new_obstacle)
     return cycles
 
 
@@ -113,9 +152,9 @@ def run():
     # ......#..."""
     logger.info(f"Starting Day {d}")
     part1 = part_1(f)
-    logger.info(f"Part 1: {part1}")
+    logger.info(f"Part 1: {len(part1)}")
 
-    part2 = part_2(f)
+    part2 = part_2(f, part1)
     logger.info(f"Part 2: {part2}")
 
 

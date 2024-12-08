@@ -8,7 +8,7 @@ from aoc_2024 import day5, day6, day7
 def main():
     logger.info("Starting AOC 2023")
     timeit(day5.run)
-    # timeit(day6.run)
+    timeit(day6.run)
     timeit(day7.run)
 
 

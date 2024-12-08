@@ -20,7 +20,7 @@ def operate(total, operands, concat=False):
     if concat:
         s_total = str(total)
         s_op = str(op)
-        if len(s_total) > len(s_op) and s_total[-len(s_op):] == s_op:
+        if len(s_total) > len(s_op) and s_total[-len(s_op) :] == s_op:
             if operate(int(s_total[: -len(s_op)]), operands[:], concat):
                 return True
 
