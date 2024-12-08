@@ -1,8 +1,6 @@
 from collections import defaultdict
 
-from loguru import logger
-
-from aoc_2024.utils import get_day_and_input, by_line
+from aoc_2024.utils import by_line, get_day_and_input, log_part_1, log_part_2, log_start
 
 OBSTACLE = "#"
 GUARDS = ("^", "V", ">", "<")
@@ -23,13 +21,13 @@ def part_1(data):
                 pos = complex(i, j)
                 match char:
                     case "^":
-                        dir = 1j
+                        direction = 1j
                     case ">":
-                        dir = 1
+                        direction = 1
                     case "<":
-                        dir = -1
+                        direction = -1
                     case "V":
-                        dir = -1j
+                        direction = -1j
 
             i += 1
         j -= 1
@@ -41,39 +39,39 @@ def part_1(data):
     positions = {pos}
     while max_i >= pos.real >= 0 >= pos.imag >= min_j:
         positions.add(pos)
-        new_pos = pos + dir
+        new_pos = pos + direction
         if new_pos in obstacles:
-            dir *= turn
+            direction *= turn
         else:
             pos = new_pos
     return positions
 
 
-def get_next_obstacle(pos, dir, new_obstacles_by_real, new_obstacles_by_imag):
+def get_next_obstacle(pos, direction, new_obstacles_by_real, new_obstacles_by_imag):
     obs = 9999999 + 999999j
 
     try:
-        if dir == 1:
+        if direction == 1:
             return complex(
                 min(o.real for o in new_obstacles_by_imag if o.real > pos.real),
                 pos.imag,
             )
-        elif dir == -1:
+        if direction == -1:
             return complex(
                 max(o.real for o in new_obstacles_by_imag if o.real < pos.real),
                 pos.imag,
             )
-        elif dir == -1j:
+        if direction == -1j:
             return complex(
                 pos.real,
                 max(o.imag for o in new_obstacles_by_real if o.imag < pos.imag),
             )
-        elif dir == 1j:
+        if direction == 1j:
             return complex(
                 pos.real,
                 min(o.imag for o in new_obstacles_by_real if o.imag > pos.imag),
             )
-    except:
+    except ValueError:
         return obs
 
 
@@ -118,20 +116,18 @@ def part_2(data, poss):
     for new_obstacle in poss:
         pos = start_pos
         positions = set()
-        dir = start_dir
+        direction = start_dir
         obs_by_imag[new_obstacle.imag].add(new_obstacle)
         obs_by_real[new_obstacle.real].add(new_obstacle)
 
         while max_i >= pos.real >= 0 >= pos.imag >= min_j:
-            obs = get_next_obstacle(
-                pos, dir, obs_by_real[pos.real], obs_by_imag[pos.imag]
-            )
-            if (obs, dir) in positions:
+            obs = get_next_obstacle(pos, direction, obs_by_real[pos.real], obs_by_imag[pos.imag])
+            if (obs, direction) in positions:
                 cycles += 1
                 break
-            positions.add((obs, dir))
-            pos = obs - dir
-            dir *= turn
+            positions.add((obs, direction))
+            pos = obs - direction
+            direction *= turn
 
         obs_by_imag[new_obstacle.imag].remove(new_obstacle)
         obs_by_real[new_obstacle.real].remove(new_obstacle)
@@ -150,12 +146,12 @@ def run():
     # ........#.
     # #.........
     # ......#..."""
-    logger.info(f"Starting Day {d}")
+    log_start(d)
     part1 = part_1(f)
-    logger.info(f"Part 1: {len(part1)}")
+    log_part_1(len(part1))
 
     part2 = part_2(f, part1)
-    logger.info(f"Part 2: {part2}")
+    log_part_2(part2)
 
 
 if __name__ == "__main__":

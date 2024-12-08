@@ -1,6 +1,4 @@
-from loguru import logger
-
-from aoc_2024.utils import get_day_and_input, by_line
+from aoc_2024.utils import by_line, get_day_and_input, log_part_1, log_part_2, log_start
 
 
 def operate(total, operands, concat=False):
@@ -8,21 +6,22 @@ def operate(total, operands, concat=False):
         return False
     if total == 0 and operands == []:
         return True
-    elif total != 0 and operands == []:
+    if total != 0 and operands == []:
         return False
     op = operands.pop()
 
     d, r = divmod(total, op)
-    if r == 0:
-        if operate(d, operands[:], concat):
-            return True
-
+    if r == 0 and operate(d, operands[:], concat):
+        return True
     if concat:
         s_total = str(total)
         s_op = str(op)
-        if len(s_total) > len(s_op) and s_total[-len(s_op) :] == s_op:
-            if operate(int(s_total[: -len(s_op)]), operands[:], concat):
-                return True
+        if (
+            len(s_total) > len(s_op)
+            and s_total[-len(s_op) :] == s_op
+            and operate(int(s_total[: -len(s_op)]), operands[:], concat)
+        ):
+            return True
 
     return operate(total - op, operands[:], concat)
 
@@ -42,9 +41,7 @@ def part_1(data):
 
 
 def part_2(data):
-    return sum(
-        total for total, operands in data if operate(total, operands[:], concat=True)
-    )
+    return sum(total for total, operands in data if operate(total, operands[:], concat=True))
 
 
 def run():
@@ -59,10 +56,10 @@ def run():
     # 192: 17 8 14
     # 21037: 9 7 18 13
     # 292: 11 6 16 20"""
-    logger.info(f"Starting Day {d}")
+    log_start(d)
     dat = parse(f)
     part1 = part_1(dat)
-    logger.info(f"Part 1: {part1}")
+    log_part_1(part1)
 
     # f = """
     # 156: 15 6
@@ -70,7 +67,7 @@ def run():
     # 192: 17 8 14
     # """
     part2 = part_2(dat)
-    logger.info(f"Part 2: {part2}")
+    log_part_2(part2)
 
 
 if __name__ == "__main__":
