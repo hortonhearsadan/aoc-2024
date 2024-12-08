@@ -2,11 +2,15 @@ import time
 
 from loguru import logger
 
-from aoc_2024 import day5, day6, day7, day8
+from aoc_2024 import day1, day2, day3, day4, day5, day6, day7, day8
 
 
 def main():
     logger.info("Starting AOC 2023")
+    timeit(day1.run)
+    timeit(day2.run)
+    timeit(day3.run)
+    timeit(day4.run)
     timeit(day5.run)
     timeit(day6.run)
     timeit(day7.run)
