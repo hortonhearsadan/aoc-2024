@@ -11,8 +11,8 @@ def part_1(data):
     paths = []
     for line in by_line(data):
         if "|" in line:
-            u,v = line.split("|")
-            graph.add_edge(int(u),int(v))
+            u, v = line.split("|")
+            graph.add_edge(int(u), int(v))
 
         elif "," in line:
             paths.append([int(s.strip()) for s in line.split(",")])
@@ -20,11 +20,11 @@ def part_1(data):
     count = 0
 
     for path in paths:
-
-        if nx.is_path(graph,path):
+        if nx.is_path(graph, path):
             count += path[int((len(path)) / 2)]
 
     return count
+
 
 def part_2(data):
     graph = nx.DiGraph()
@@ -40,7 +40,7 @@ def part_2(data):
     count = 0
     for path in paths:
         sub = graph.subgraph(path)
-        if not nx.is_path(sub,path):
+        if not nx.is_path(sub, path):
             try:
                 p = list(nx.topological_sort(sub))
                 count += p[int((len(p)) / 2)]
@@ -48,6 +48,7 @@ def part_2(data):
                 continue
 
     return count
+
 
 def run():
     d, f = get_day_and_input(__file__)
@@ -60,5 +61,5 @@ def run():
     logger.info(f"Part 2: {part2}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

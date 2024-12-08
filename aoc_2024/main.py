@@ -12,7 +12,6 @@ def main():
     timeit(day7.run)
 
 
-
 def timeit(fn):
     t = time.time()
     fn()
