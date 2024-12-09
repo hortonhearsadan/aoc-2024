@@ -48,20 +48,15 @@ def part_1(data):
 
         free = not free
 
-    space = list(freespace)
     while free_indices:
-        end = space.pop()
+        end = freespace.pop()
         if end == ".":
             free_indices.pop()
             continue
         i = free_indices.popleft()
-        space[i] = end
+        freespace[i] = end
 
-    total = 0
-    for i, s in enumerate(space):
-        total += int(s) * i
-
-    return total
+    return sum(int(s) * i for i, s in enumerate(freespace))
 
 
 def part_2(data):
@@ -117,7 +112,7 @@ def find_space(space, freespaces):
 
 def run():
     d, f = get_day_and_input(__file__)
-    # f ="2333133121414131402" noqa: ERA001
+    # f ="2333133121414131402"  # noqa: ERA001
     log_start(d)
     part1 = part_1(f)
     log_part_1(part1)
