@@ -1,11 +1,11 @@
 import math
 from collections import defaultdict
-from functools import lru_cache
+from functools import cache
 
 from aoc_2024.utils import get_day_and_input, log_part_1, log_part_2, log_start
 
 
-@lru_cache(maxsize=None)
+@cache
 def get_keys(k):
     if k == 0:
         return (1,)
