@@ -2,7 +2,7 @@ import time
 
 from loguru import logger
 
-from aoc_2024 import day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11
+from aoc_2024 import day1, day2, day3, day4, day5, day6, day7, day8, day9, day10, day11, day12
 
 
 def main():
@@ -18,6 +18,7 @@ def main():
     timeit(day9.run)
     timeit(day10.run)
     timeit(day11.run)
+    timeit(day12.run)
 
 
 def timeit(fn):
