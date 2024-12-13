@@ -16,7 +16,7 @@ class MachineSystem:
 
     @property
     def A(self):  # noqa: N802
-        return np.array([[self.x_1, self.y_1], [self.x_2, self.y_2]])
+        return np.array([[self.x_1, self.x_2], [self.y_1, self.y_2]])
 
     @property
     def invA(self):  # noqa: N802
@@ -27,7 +27,7 @@ class MachineSystem:
         return np.array([self.p_x, self.p_y])
 
     def solve(self):
-        return np.dot(self.invA.T, self.b)
+        return np.dot(self.invA, self.b)
 
     def int_solve(self, lb=0, ub=1e12):
         a, b = self.solve()
