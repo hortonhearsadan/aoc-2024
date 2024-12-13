@@ -17,6 +17,11 @@ def get_day_and_input_by_line(f):
     return day, [s for s in string.split("\n") if s]
 
 
+def get_day_and_input_by_double_line(f):
+    day, string = get_day_and_input(f)
+    return day, [s for s in string.split("\n\n") if s]
+
+
 def by_line(s):
     return s.strip().split("\n")
 
