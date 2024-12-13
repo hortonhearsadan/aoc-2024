@@ -1,7 +1,3 @@
-import re
-
-import numpy as np
-
 from aoc_2024.utils import get_day_and_input_by_double_line, log_part_1, log_part_2, log_start
 
 
@@ -14,24 +10,12 @@ class MachineSystem:
         self.p_x = p_x
         self.p_y = p_y
 
-    @property
-    def invA(self):  # noqa: N802
-        return self.det * self.adjoint
-
-    @property
-    def det(self):
-        return 1 / ((self.x_1 * self.y_2) - (self.x_2 * self.y_1))
-
-    @property
-    def adjoint(self):
-        return np.array([[self.y_2, -self.x_2], [-self.y_1, self.x_1]])
-
-    @property
-    def b(self):
-        return np.array([self.p_x, self.p_y])
-
     def solve(self):
-        return self.invA.dot(self.b)
+        d = (self.x_1 * self.y_2) - (self.x_2 * self.y_1)
+        a = ((self.y_2 * self.p_x) - (self.x_2 * self.p_y)) / d
+        b = ((-self.y_1 * self.p_x) + (self.x_1 * self.p_y)) / d
+
+        return a, b
 
     def int_solve(self, lb=0, ub=1e12):
         a, b = self.solve()
@@ -40,26 +24,27 @@ class MachineSystem:
         if not lb <= ia <= ub >= ib >= lb:
             return None, None
 
-        if self.solved(ia, ib):
+        if abs(ia - a) <= 0.0001 and abs(ib - b) <= 0.0001:
             return ia, ib
         return None, None
 
-    def solved(self, a, b):
-        return (self.x_1 * a) + (self.x_2 * b) == self.p_x and (self.y_1 * a) + (self.y_2 * b) == self.p_y
-
 
 def part_1(data, offset=0, ub=1e12):
-    regex = re.compile(r".*?(\d+).*?(\d+)\n.*?(\d+).*?(\d+)\n.*?(\d+).*?(\d+)")
     total_tokens = 0
     for d in data:
-        matches = re.match(regex, d)
-        system = MachineSystem(*map(int, matches.groups()))
+        nums = [
+            int(s)
+            for s in d.replace("+", " ").replace("=", " ").replace(",", " ").replace("\n", " ").split(" ")
+            if s.isdigit()
+        ]
+        system = MachineSystem(*nums)
+
         if offset:
             system.p_y += offset
             system.p_x += offset
-        x, y = system.int_solve(lb=0, ub=ub)
-        if x is not None and y is not None:
-            tokens = 3 * x + y
+        a, b = system.int_solve(lb=0, ub=ub)
+        if a is not None and b is not None:
+            tokens = 3 * a + b
             total_tokens += tokens
 
     return int(total_tokens)
