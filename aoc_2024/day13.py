@@ -15,19 +15,23 @@ class MachineSystem:
         self.p_y = p_y
 
     @property
-    def A(self):  # noqa: N802
-        return np.array([[self.x_1, self.x_2], [self.y_1, self.y_2]])
+    def invA(self):  # noqa: N802
+        return self.det * self.adjoint
 
     @property
-    def invA(self):  # noqa: N802
-        return np.linalg.inv(self.A)
+    def det(self):
+        return 1 / ((self.x_1 * self.y_2) - (self.x_2 * self.y_1))
+
+    @property
+    def adjoint(self):
+        return np.array([[self.y_2, -self.x_2], [-self.y_1, self.x_1]])
 
     @property
     def b(self):
         return np.array([self.p_x, self.p_y])
 
     def solve(self):
-        return np.dot(self.invA, self.b)
+        return self.invA.dot(self.b)
 
     def int_solve(self, lb=0, ub=1e12):
         a, b = self.solve()
